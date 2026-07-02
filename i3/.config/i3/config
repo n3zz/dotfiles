@@ -83,9 +83,8 @@ bindsym $mod+Escape exec betterlockscreen -l
 
 # ----------- REPLAY SETTINGS WITH GPU RECORDER ----------- #
 # Replay Buffer - Replay Save
-bindsym Mod1+Shift+s exec --no-startup-id ~/replay_scripts/gsr-replay-save
-# Replay Buffer - Replay Toggle
-bindsym Mod1+Shift+r exec --no-startup-id ~/replay_scripts/gsr-replay-toggle
+bindsym Mod1+Shift+r exec --no-startup-id ~/replay_scripts/gsr-replay-start
+bindsym Mod1+Shift+s exec --no-startup-id ~/replay_scripts/gsr-replay-stop
 
 # Screenshot (flameshot - native X11, no portal needed)
 bindsym Print exec flameshot full -p ~/Pictures
