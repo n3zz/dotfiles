@@ -1,0 +1,27 @@
+/**
+ * @name Pywal
+ * @description Dynamically generated theme from pywal colors
+ * @author Tesh
+ * @version 1.0.0
+ */
+
+.theme-dark {
+  --background-primary: {background};
+  --background-secondary: {color0};
+  --background-secondary-alt: {color8};
+  --background-tertiary: {color0};
+  --background-floating: {color0};
+  --background-accent: {color8};
+  --text-normal: {foreground};
+  --text-muted: {color8};
+  --header-primary: {foreground};
+  --header-secondary: {color7};
+  --interactive-normal: {color7};
+  --interactive-hover: {foreground};
+  --interactive-active: {foreground};
+  --channels-default: {color7};
+  --channeltextarea-background: {color0};
+  --text-link: {color4};
+  --scrollbar-thin-thumb: {color8};
+  --scrollbar-auto-thumb: {color8};
+}

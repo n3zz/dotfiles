@@ -1,0 +1,27 @@
+/**
+ * @name Pywal
+ * @description Dracula
+ * @author Tesh
+ * @version 1.0.0
+ */
+
+.theme-dark {
+  --background-primary: #282a36;
+  --background-secondary: #21222c;
+  --background-secondary-alt: #44475a;
+  --background-tertiary: #21222c;
+  --background-floating: #21222c;
+  --background-accent: #44475a;
+  --text-normal: #f8f8f2;
+  --text-muted: #6272a4;
+  --header-primary: #f8f8f2;
+  --header-secondary: #6272a4;
+  --interactive-normal: #6272a4;
+  --interactive-hover: #f8f8f2;
+  --interactive-active: #f8f8f2;
+  --channels-default: #6272a4;
+  --channeltextarea-background: #21222c;
+  --text-link: #8be9fd;
+  --scrollbar-thin-thumb: #44475a;
+  --scrollbar-auto-thumb: #44475a;
+}

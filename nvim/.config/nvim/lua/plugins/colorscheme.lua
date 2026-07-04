@@ -3,7 +3,7 @@ local function get_theme()
   if f then
     local name = f:read("*l")
     f:close()
-    if name == "neopywal" or name == "tokyonight" then
+    if name == "neopywal" or name == "tokyonight" or name == "dracula" then
       return name
     end
   end
@@ -17,7 +17,7 @@ return {
     "folke/tokyonight.nvim",
     opts = { style = "storm" },
   },
-
+  { "Mofiqul/dracula.nvim" },
   {
     "LazyVim/LazyVim",
     opts = {

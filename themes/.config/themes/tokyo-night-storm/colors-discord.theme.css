@@ -1,0 +1,27 @@
+/**
+ * @name Pywal
+ * @description Tokyo Night Storm
+ * @author Tesh
+ * @version 1.0.0
+ */
+
+.theme-dark {
+  --background-primary: #1a1b26;
+  --background-secondary: #15161e;
+  --background-secondary-alt: #414868;
+  --background-tertiary: #15161e;
+  --background-floating: #15161e;
+  --background-accent: #414868;
+  --text-normal: #c0caf5;
+  --text-muted: #414868;
+  --header-primary: #c0caf5;
+  --header-secondary: #a9b1d6;
+  --interactive-normal: #a9b1d6;
+  --interactive-hover: #c0caf5;
+  --interactive-active: #c0caf5;
+  --channels-default: #a9b1d6;
+  --channeltextarea-background: #15161e;
+  --text-link: #7aa2f7;
+  --scrollbar-thin-thumb: #414868;
+  --scrollbar-auto-thumb: #414868;
+}

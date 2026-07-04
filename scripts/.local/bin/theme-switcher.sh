@@ -33,7 +33,12 @@ case "$main_choice" in
 "Fixed Theme")
   theme_name=$(pick_theme) || exit 0
   cp "$THEMES_DIR/$theme_name"/colors-* "$CACHE_DIR"/ 2>/dev/null
-  echo "tokyonight" >"$CACHE_DIR/nvim-colorscheme"
+  case "$theme_name" in
+  tokyo-night-storm) nvim_theme="tokyonight" ;;
+  dracula) nvim_theme="dracula" ;;
+  *) nvim_theme="tokyonight" ;;
+  esac
+  echo "$nvim_theme" >"$CACHE_DIR/nvim-colorscheme"
   "$HOME/.config/wal/postrun"
   notify-send "Theme Switcher" "Switched to: $theme_name"
   ;;
