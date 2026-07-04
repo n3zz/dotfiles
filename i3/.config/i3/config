@@ -9,6 +9,7 @@
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
+include ~/.cache/wal/colors-i3.conf
 
 
 set $mod Mod4
@@ -43,6 +44,7 @@ exec --no-startup-dunst
 exec --no-startup-id xss-lock -- betterlockscreen -l
 exec feh --bg-scale Wallpapers/wave2.png
 exec_always --no-startup-id ~/.config/polybar/launch_polybar.sh
+exec --no-startup-id ~/.local/bin/discord-audio-mix.sh
 
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.
@@ -91,6 +93,10 @@ bindsym Print exec flameshot full -p ~/Pictures
 bindsym $mod+Print exec flameshot gui
 bindsym $mod+Shift+s exec flameshot gui --clipboard
 bindsym $mod+Shift+p exec flameshot full --clipboard
+
+
+# Theme switcher
+bindsym $mod+Shift+t exec --no-startup-id ~/.local/bin/theme-switcher.sh
 
 # change focus
 bindsym $mod+j focus left

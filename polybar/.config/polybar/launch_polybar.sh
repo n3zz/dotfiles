@@ -6,7 +6,7 @@ while pgrep -x polybar >/dev/null; do sleep 0.2; done
 
 if type "xrandr"; then
   for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-    MONITOR=$m polybar --reload main &
+    MONITOR=$m polybar main &
   done
 else
   polybar --reload main &

@@ -3,6 +3,8 @@
  * Tokyo Night Storm — App Launcher
  */
 
+@import "~/.cache/wal/colors-rofi.rasi"
+
 configuration {
     modi: "drun,run,window";
     icon-theme: "Papirus";
@@ -12,10 +14,6 @@ configuration {
 }
 
 * {
-    bg:       #1a1b26;
-    bg-alt:   #24283b;
-    fg:       #c0caf5;
-    accent:   #7aa2f7;
     comment:  #565f89;
 
     background-color: @bg;
