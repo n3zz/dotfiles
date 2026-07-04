@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# Pywal postrun hook — pywal executes this automatically after every run.
+# Reloads each app so the new palette takes effect immediately.
+
+# i3 — reload picks up the new colors-i3.conf via the include line
+i3-msg reload >/dev/null 2>&1
+
+# Polybar — restart via your launch script
+# ~/.config/polybar/launch_polybar.sh >/dev/null 2>&1 &
+
+~/.config/polybar/launch_polybar.sh >/tmp/polybar-postrun.log 2>&1 &
+
+# Dunst — live reload via the dunstrc.d drop-in, no restart needed
+dunstctl reload
+
+# Kitty — no live reload (remote control not enabled).
+# Open windows keep old colors until closed; new windows pick up
+# the new palette automatically via the `include` line in kitty.conf.
+
+# Rofi — no action needed, reads its config fresh on every launch

@@ -1,37 +1,41 @@
-; ~/.config/dunst/dunstrc
-;
-; Tokyo Night Storm
-
 [global]
+    ### Display ###
     monitor = 0
     follow = mouse
-    width = 360
-    height = 120
+
+    ### Geometry ###
+    width = (300, 400)
+    height = 300
     origin = top-right
-    offset = 10x40
+    offset = 15x50
     scale = 0
     notification_limit = 5
 
+    ### Progress bar ###
     progress_bar = true
     progress_bar_height = 10
     progress_bar_frame_width = 1
     progress_bar_min_width = 150
     progress_bar_max_width = 300
+    progress_bar_corner_radius = 4
 
-    indicate_hidden = yes
-    transparency = 8
+    ### Appearance ###
+    transparency = 20
+    corner_radius = 8
+    frame_width = 0
+    gap_size = 6
     separator_height = 2
+    separator_color = frame
     padding = 12
     horizontal_padding = 12
     text_icon_padding = 8
-    frame_width = 2
-    frame_color = "#7aa2f7"
-    separator_color = frame
+
     sort = yes
     idle_threshold = 120
 
-    font = JetBrainsMono Nerd Font 11
-    line_height = 0
+    ### Text ###
+    font = JetBrains Mono Bold 10
+    line_height = 4
     markup = full
     format = "<b>%s</b>\n%b"
     alignment = left
@@ -43,19 +47,27 @@
     hide_duplicate_count = false
     show_indicators = yes
 
+    ### Icons ###
     icon_position = left
-    min_icon_size = 0
-    max_icon_size = 48
+    min_icon_size = 32
+    max_icon_size = 64
+    icon_corner_radius = 6
 
+    ### History ###
     sticky_history = yes
     history_length = 20
 
+    ### Misc ###
+    dmenu = /usr/bin/dmenu -p dunst:
+    browser = /usr/bin/xdg-open
+    always_run_script = true
     title = Dunst
     class = Dunst
+    startup_notification = false
+    verbosity = mesg
+    corners = all
 
-    corner_radius = 0
-    ignore_dbusclose = false
-
+    ### Mouse ###
     mouse_left_click = close_current
     mouse_middle_click = do_action, close_current
     mouse_right_click = close_all
@@ -64,20 +76,19 @@
     per_monitor_dpi = false
 
 [urgency_low]
-    background = "#16161e"
-    foreground = "#a9b1d6"
-    frame_color = "#414868"
+    background = "#24283b"
+    foreground = "#c0caf5"
+    frame_color = "#24283b"
     timeout = 4
 
 [urgency_normal]
-    background = "#16161e"
+    background = "#24283b"
     foreground = "#c0caf5"
-    frame_color = "#7aa2f7"
+    frame_color = "#24283b"
     timeout = 6
 
 [urgency_critical]
-    background = "#1a1b26"
+    background = "#24283b"
     foreground = "#f7768e"
     frame_color = "#f7768e"
     timeout = 0
-
