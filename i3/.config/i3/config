@@ -44,7 +44,7 @@ exec --no-startup-dunst
 exec --no-startup-id xss-lock -- betterlockscreen -l
 exec feh --bg-scale Wallpapers/wave2.png
 exec_always --no-startup-id ~/.config/polybar/launch_polybar.sh
-exec --no-startup-id ~/.local/bin/discord-audio-mix.sh
+exec_always --no-startup-id i3-auto-tiling
 
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.
