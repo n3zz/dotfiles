@@ -6,8 +6,6 @@ configuration {
 }
 
 * {
-    
-
     background-color: @bg;
     text-color: @fg;
 }
@@ -15,6 +13,8 @@ configuration {
 window {
     width: 240px;
     border-radius: 12px;
+    transparency: "real";
+    background-color: @bgt;
     border: 2px;
     border-color: @accent;
     padding: 16px;
@@ -38,7 +38,7 @@ element {
 }
 
 element selected {
-    background-color: #24283b99;
+    background-color: @bgt;
     text-color: @accent;
     border-color: @accent;
 }
