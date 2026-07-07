@@ -1,84 +1,138 @@
-/* ~/.config/rofi/config.rasi
- *
- * Tokyo Night Storm — App Launcher
- */
-
 @import "~/.cache/wal/colors-rofi.rasi"
 
+
 configuration {
-    modi: "drun,run,window";
-    icon-theme: "Papirus";
-    font: "JetBrainsMono Nerd Font 12";
-    display-drun: "Search...";
-    drun-display-format: "{name}";
+  modi: "drun,run,window,ssh";
+  font: "JetBrainsMono Nerd Font 12";
+  drun-display-format: "{name}";
 }
 
 * {
-    comment:  #565f89;
+  // general
+  bg: #282828;
+  bgt: #28282895;
+  t: transparent;
+  fg: @accent;
 
-    background-color: @bg;
-    text-color: @fg;
+  selected-fg: @fg;
+  selected-bg: @bg;
+
+  // for windows
+  active: #a9b665;
+  urgent: #fb4934;
 }
+
 
 window {
-    width: 600px;
-    background-color: @bg;
-    border: 2px;
-    border-color: @accent;
-    border-radius: 12px;
-    padding: 16px;
-}
-
-mainbox {
-    background-color: transparent;
-    children: [inputbar, listview];
-    spacing: 10px;
-}
-
-inputbar {
-    background-color: @bg-alt;
-    border-radius: 8px;
-    padding: 10px 12px;
-    children: [entry];
-}
-
-entry {
-    background-color: transparent;
-    placeholder: "Whatchu lookin for?";
-    placeholder-color: @comment;
-    text-color: @fg;
+  fullscreen:true;
+  padding: 35% 30%;
+  transparency: "real";
+  background-color: @bgt;
+  border-color: @t;
 }
 
 listview {
-    background-color: transparent;
-    lines: 8;
-    scrollbar: false;
-    spacing: 6px;
-    fixed-height: false;
+  border: 0 0 0 0;
+  padding: 23 0 0;
+  scrollbar: true;
+}
+
+scrollbar {
+  width: 4px;
+  border: 0;
+  handle-color: @fg;
+  handle-width: 8px;
+  padding: 0 5;
+}
+
+entry {
+  placeholder: "";
+}
+
+// Elements of the rofi menu - Need to sync up with script
+
+element-text {
+  text-color: @fg;
 }
 
 element {
-
-    padding: 8px 10px;
-    border-radius: 6px;
-    border: 0px 0px 0px 2px;
-    border-color: transparent;
+  border:0;
+  padding: 2px;
 }
 
-element selected {
-    background-color: #24283b99;
-    text-color: @accent;
-    border-color: @accent;
+element.normal.normal {
+  background-color: @t;
+  text-color: @fg;
 }
 
-element-text {
-    background-color: transparent;
-    text-color: inherit;
-    vertical-align: 0.5;
+element.normal.urgent {
+  background-color: @t;
+  text-color: @active;
 }
 
-element-icon {
-    background-color: transparent;
-    size: 24px;
-    vertical-align: 0.5;
+element.normal.active {
+    background-color: @t;
+    text-color:       @active;
+}
+
+element.selected.normal {
+    background-color: @selected-bg;
+    text-color:       @selected-fg;
+}
+
+element.selected.urgent {
+    background-color: @selected-bg;
+    text-color:       @urgent;
+}
+
+element.selected.active {
+    background-color: @selected-bg;
+    text-color:       @selected-fg;
+}
+
+element.alternate.normal {
+    background-color: @t;
+    text-color:       @fg;
+}
+
+element.alternate.urgent {
+    background-color: @t;
+    text-color:       @urgent;
+}
+
+element.alternate.active {
+    background-color: @t;
+    text-color:       @active;
+}
+
+sidebar {
+    border:       2px 0 0;
+    border-color: @fg;
+}
+
+inputbar {
+    spacing:    0;
+    text-color: @fg;
+    padding:    2px;
+    children:   [ prompt, textbox-prompt-sep, entry, case-indicator ];
+}
+
+case-indicator,
+entry,
+prompt,
+button {
+    spacing:    0;
+    text-color: @fg;
+}
+
+button.selected {
+    background-color: @bg;
+    text-color:       @fg;
+}
+
+textbox-prompt-sep {
+    expand:     false;
+    str:        ":";
+    text-color: @fg;
+    margin:     0 0.3em 0 0;
 }
