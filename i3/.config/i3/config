@@ -11,7 +11,6 @@
 
 include ~/.cache/wal/colors-i3.conf
 
-
 set $mod Mod4
 set $term kitty
 set $launcher rofi -show drun
@@ -24,6 +23,8 @@ default_border pixel 1
 
 exec --no-startup-id xrandr --output DP-0  --mode 1920x1080 --rate 144 --pos 0x0 \
                             --output DP-2 --primary --mode 2560x1440 --rate 164.83 --pos 1920x0
+
+exec --no-startup-id xsettingsd
 
 workspace 2 output DP-2
 
@@ -38,7 +39,6 @@ font pango:JetBrainsMono Nerd Font 10
 # Start XDG autostart .desktop files using dex. See also
 # https://wiki.archlinux.org/index.php/XDG_Autostart
 exec --no-startup-id dex --autostart --environment i3
-
 exec --no-startup-id picom -b
 exec --no-startup-dunst
 exec --no-startup-id xss-lock -- betterlockscreen -l
@@ -89,10 +89,15 @@ bindsym $mod+Shift+q kill
 # Lock
 bindsym $mod+Escape exec betterlockscreen -l
 
+# Firefox shortcut
+bindsym Mod1+f exec firefox
+
+
 # ----------- REPLAY SETTINGS WITH GPU RECORDER ----------- #
 # Replay Buffer - Replay Save
 bindsym Mod1+Shift+r exec --no-startup-id ~/replay_scripts/gsr-replay-start
 bindsym Mod1+Shift+s exec --no-startup-id ~/replay_scripts/gsr-replay-stop
+
 
 # Screenshot (flameshot - native X11, no portal needed)
 bindsym Print exec flameshot full -p ~/Pictures
@@ -233,18 +238,18 @@ bindsym $mod+r mode "resize"
 focus_on_window_activation none
 
 for_window [class="Spotify"] move to scratchpad
-bindsym $mod+Shift+m scratchpad show
+for_window [class="protonvpn-app"] move to scratchpad
+
+bindsym $mod+Shift+m [class="Spotify"] scratchpad show
+bindsym Mod1+Shift+p [class="protonvpn-app"] scratchpad show
 
 for_window [class="steam"] floating enable
+for_window [class="protonvpn-app"] floating enable
+
 
 # Force Gamescope sessions to float
 for_window [class="gamescope"] floating enable, move window to output DP-2, border pixel 0
 
-assign [class="(?i)steam"] 2
-assign [class="^steam_app_"] 2
-for_window [class="(?i)steam"] focus
-for_window [class="^steam_app_"] focus
-for_window [class="^steam_app_"] urgent disable
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)

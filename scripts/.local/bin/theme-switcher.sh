@@ -33,7 +33,9 @@ main_choice=$(printf 'Wallpaper Only\nFixed Theme\nGenerate from Wallpaper' | ro
 case "$main_choice" in
 "Wallpaper Only")
   wallpaper_path=$(pick_wallpaper) || exit 0
+
   feh --bg-fill "$wallpaper_path"
+
   notify-send "Theme Switcher" "Wallpaper set: $(basename "$wallpaper_path")"
   ;;
 
@@ -64,10 +66,12 @@ case "$main_choice" in
   requested_mode=$(pick_mode) || exit 0
 
   if [ "$requested_mode" = "light" ]; then
-    wal -l -i "$wallpaper_path" -o "$HOME/.config/wal/postrun"
+    wal -l -n -i "$wallpaper_path" -o "$HOME/.config/wal/postrun"
   else
-    wal -i "$wallpaper_path" -o "$HOME/.config/wal/postrun"
+    wal -n -i "$wallpaper_path" -o "$HOME/.config/wal/postrun"
   fi
+
+  feh --bg-fill "$wallpaper_path"
 
   echo "neopywal" >"$CACHE_DIR/nvim-colorscheme"
   notify-send "Theme Switcher" "Applied wallpaper: $(basename "$wallpaper_path") ($requested_mode)"
