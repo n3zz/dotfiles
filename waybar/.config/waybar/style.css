@@ -1,0 +1,28 @@
+@import url("file:///home/ary/.cache/wal/colors-gtk.css");
+
+* {
+  font-family: "JetBrainsMono Nerd Font";
+  font-size: 15px;
+  min-height: 0;
+}
+
+window#waybar {
+  background-color: @background;
+  color: @foreground;
+}
+
+#workspaces button {
+  color: @foreground;
+}
+
+#workspaces button.active {
+  background-color: @color4;
+}
+
+#clock,
+#battery,
+#network,
+#pulseaudio {
+  color: @foreground;
+  padding: 0 10px;
+}

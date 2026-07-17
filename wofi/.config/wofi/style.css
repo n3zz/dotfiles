@@ -1,0 +1,14 @@
+@import url("file:///home/ary/.cache/wal/colors-gtk.css");
+
+window {
+  background-color: @background;
+}
+
+#input {
+  color: @foreground;
+  background-color: @color0;
+}
+
+#entry:selected {
+  background-color: @color4;
+}

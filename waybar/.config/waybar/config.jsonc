@@ -1,0 +1,59 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 30,
+  "modules-left": ["hyprland/workspaces", "mpris"],
+  "modules-center": ["clock"],
+  "modules-right": ["network", "pulseaudio", "battery", "tray"],
+
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "on-click": "activate",
+  },
+
+  "mpris": {
+    "format": "{player_icon} {title} - {artist}",
+    "format-paused": "{status_icon} {title} - {artist}",
+    "player-icons": {
+      "default": "▶",
+      "spotify": "",
+    },
+    "status-icons": {
+      "paused": "⏸",
+    },
+    "max-length": 40,
+  },
+
+  "mpris": {
+    "format": "{player_icon} {title} - {artist}",
+    "on-click": "playerctl play-pause",
+    "on-click-right": "playerctl next",
+    "on-scroll-up": "playerctl volume 0.05+",
+    "on-scroll-down": "playerctl volume 0.05-",
+    "max-length": 40,
+  },
+  "clock": {
+    "format": "{:%H:%M}",
+  },
+  "network": {
+    "format-wifi": " {essid}",
+    "format-ethernet": " Connected",
+    "format-disconnected": "⚠ Disconnected",
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-icons": ["", "", ""],
+  },
+  "battery": {
+    "format": "{icon} {capacity}%",
+    "format-icons": ["", "", "", "", ""],
+  },
+  "tray": {
+    "spacing": 8,
+  },
+  "custom/flameshot": {
+    "format": "",
+    "on-click": "flameshot gui",
+    "tooltip-format": "Screenshot",
+  },
+}

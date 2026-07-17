@@ -52,6 +52,7 @@ alias polybar-c='nvim ~/.config/polybar/config.ini'
 alias polybar-l='nvim ~/.config/polybar/launch_polybar.sh'
 alias i3-c='nvim ~/.config/i3/config'
 alias gohome='cd ~'
+alias hyper-c='nvim ~/.config/hypr/hyprland.lua'
 
 # To start fuzzy finder
 eval "$(fzf --zsh)"
