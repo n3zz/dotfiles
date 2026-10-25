@@ -389,7 +389,7 @@ Item {
                 Action { glyph: "󰄀"; label: "Save clip"; onClicked: dash.run(["gsr-replay-save"]) }
                 Action { glyph: "󰸉"; label: "Wallpaper"; onClicked: dash.run(["quickshell", "-p", dash.home + "/.config/quickshell/wallpick"]) }
                 Action { glyph: "󰌾"; label: "Lock"; onClicked: dash.run(["hyprlock"]) }
-                Action { glyph: "󰐥"; label: "Power"; onClicked: dash.run(["wlogout", "--protocol", "layer-shell"]) }
+                Action { glyph: "󰐥"; label: "Power"; onClicked: dash.run(["quickshell", "-p", dash.home + "/.config/quickshell/power"]) }
             }
         }
     }

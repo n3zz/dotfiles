@@ -22,7 +22,7 @@ hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("$HOME/.config/hypr/theme-hyp
 hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("$HOME/.config/hypr/theme-hypr.sh --random"))
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
 
-hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("wlogout --protocol layer-shell"))
+hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("pkill -f '^quickshell -p .*/power' || quickshell -p $HOME/.config/quickshell/power"))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
 
 -- Move focus with mainMod + arrow keys
