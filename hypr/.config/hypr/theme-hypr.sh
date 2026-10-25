@@ -59,7 +59,7 @@ set_wallpaper() { # awww remembers the last image itself, no conf to persist
 reload_waybar() { pgrep -x waybar >/dev/null && pkill -SIGUSR2 waybar; true; }
 
 generate_theme() {
-  wal -i "$1" -n -q
+  wallust run -q "$1"
   echo "neopywal" >"$WAL_CACHE/nvim-colorscheme"
 
   # GTK-compatible colours for waybar/wofi/rofi

@@ -1,0 +1,19 @@
+# wallust: generate a palette from the wallpaper and render templates.
+# Outputs keep pywal's paths (~/.cache/wal/...) so every consumer works unchanged.
+backend = "fastresize"
+color_space = "lch"
+palette = "dark16"
+check_contrast = true
+
+[templates]
+colors        = { template = 'colors',                   target = '~/.cache/wal/colors',                   pywal = true }
+neopywal      = { template = 'colors-wal.vim',           target = '~/.cache/wal/colors-wal.vim',           pywal = true }
+kitty         = { template = 'colors-kitty.conf',        target = '~/.cache/wal/colors-kitty.conf',        pywal = true }
+btop          = { template = 'colors-btop.theme',        target = '~/.cache/wal/colors-btop.theme',        pywal = true }
+dunst         = { template = 'colors-dunst.conf',        target = '~/.cache/wal/colors-dunst.conf',        pywal = true }
+discord       = { template = 'colors-discord.theme.css', target = '~/.cache/wal/colors-discord.theme.css', pywal = true }
+i3            = { template = 'colors-i3.conf',           target = '~/.cache/wal/colors-i3.conf',           pywal = true }
+polybar       = { template = 'colors-polybar.ini',       target = '~/.cache/wal/colors-polybar.ini',       pywal = true }
+rofi          = { template = 'colors-rofi.rasi',         target = '~/.cache/wal/colors-rofi.rasi',         pywal = true }
+rofi-vars     = { template = 'colors-rofi-vars.rasi',    target = '~/.cache/wal/colors-rofi-vars.rasi',    pywal = true }
+quickshell    = { template = 'Colours.qml',              target = '~/.cache/wal/Colours.qml',              pywal = true }

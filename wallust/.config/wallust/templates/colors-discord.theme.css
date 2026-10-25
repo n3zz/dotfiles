@@ -5,7 +5,7 @@
  * @version 1.0.0
  */
 
-.theme-dark {
+.theme-dark {{
   --background-primary: {background};
   --background-secondary: {color0};
   --background-secondary-alt: {color8};
@@ -24,4 +24,4 @@
   --text-link: {color4};
   --scrollbar-thin-thumb: {color8};
   --scrollbar-auto-thumb: {color8};
-}
+}}

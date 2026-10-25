@@ -66,9 +66,9 @@ case "$main_choice" in
   requested_mode=$(pick_mode) || exit 0
 
   if [ "$requested_mode" = "light" ]; then
-    wal -l -n -i "$wallpaper_path" -o "$HOME/.config/wal/postrun"
+    wallust run -q -p light16 "$wallpaper_path" && "$HOME/.config/wal/postrun"
   else
-    wal -n -i "$wallpaper_path" -o "$HOME/.config/wal/postrun"
+    wallust run -q "$wallpaper_path" && "$HOME/.config/wal/postrun"
   fi
 
   feh --bg-fill "$wallpaper_path"
