@@ -12,6 +12,10 @@ Singleton {
 
     property bool dnd: false
     property bool caffeine: false
+
+    // shared bar UI state (same on every monitor)
+    property bool statsCollapsed: false
+    property bool mediaExpanded: false
     property var popups: []          // notifications currently shown as toasts
     property var times: ({})         // notification id -> arrival Date
 

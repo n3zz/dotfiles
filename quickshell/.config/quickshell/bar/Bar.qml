@@ -299,19 +299,55 @@ PanelWindow {
             }
         }
 
-        Label {
-            text: "  " + Stats.cpu + "%  " + Stats.cpuTemp + "°"
-            color: Stats.cpuTemp >= 85 ? Theme.danger : Colours.fg
-        }
-        Label {
-            text: "󰢮  " + Stats.gpu + "%  " + Stats.gpuTemp + "°"
-            color: Stats.gpuTemp >= 83 ? Theme.danger : Colours.fg
-        }
-        Label { text: "󰍛  " + Stats.mem + "%" }
-        Label {
-            readonly property int pct: Stats.rootDisk ? Stats.rootDisk.pct : 0
-            text: "󰋊  " + pct + "%"
-            color: pct >= 90 ? Theme.danger : Colours.fg
+        // CPU / GPU / RAM / disk — click to fold into a single gauge icon (red if anything is hot or full)
+        Item {
+            id: statsBox
+            readonly property bool collapsed: Notifs.statsCollapsed
+            readonly property bool hot: Stats.cpuTemp >= 85 || Stats.gpuTemp >= 83 || (Stats.rootDisk?.pct ?? 0) >= 90
+
+            implicitHeight: 38
+            implicitWidth: collapsed ? miniGauge.implicitWidth : statsRow.implicitWidth
+            Behavior on implicitWidth { NumberAnimation { duration: 340; easing.type: Easing.OutQuint } }
+            clip: true
+
+            RowLayout {
+                id: statsRow
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 14
+                opacity: statsBox.collapsed ? 0 : 1
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+
+                Label {
+                    text: "  " + Stats.cpu + "%  " + Stats.cpuTemp + "°"
+                    color: Stats.cpuTemp >= 85 ? Theme.danger : Colours.fg
+                }
+                Label {
+                    text: "󰢮  " + Stats.gpu + "%  " + Stats.gpuTemp + "°"
+                    color: Stats.gpuTemp >= 83 ? Theme.danger : Colours.fg
+                }
+                Label { text: "󰍛  " + Stats.mem + "%" }
+                Label {
+                    readonly property int pct: Stats.rootDisk ? Stats.rootDisk.pct : 0
+                    text: "󰋊  " + pct + "%"
+                    color: pct >= 90 ? Theme.danger : Colours.fg
+                }
+            }
+
+            Label {
+                id: miniGauge
+                anchors.verticalCenter: parent.verticalCenter
+                text: "󰓅"
+                font.pixelSize: 16
+                color: statsBox.hot ? Theme.danger : Colours.fg
+                opacity: statsBox.collapsed ? 1 : 0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: Notifs.statsCollapsed = !Notifs.statsCollapsed
+            }
         }
 
         Sep {}
@@ -392,21 +428,31 @@ PanelWindow {
                 model: SystemTray.items.values
 
                 IconImage {
+                    id: trayIcon
                     required property var modelData
                     anchors.verticalCenter: parent.verticalCenter
                     source: modelData.icon
                     implicitSize: 16
 
+                    // the app's own menu, attached just below its icon
+                    QsMenuAnchor {
+                        id: trayMenu
+                        menu: trayIcon.modelData.menu
+                        anchor.item: trayIcon
+                        anchor.edges: Edges.Bottom
+                        anchor.gravity: Edges.Bottom
+                    }
+
                     MouseArea {
                         anchors.fill: parent
+                        anchors.margins: -4
+                        cursorShape: Qt.PointingHandCursor
                         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+                        // left: open the app (or its menu if that's all it has); right: menu; middle: secondary action
                         onClicked: mouse => {
-                            const it = parent.modelData
+                            const it = trayIcon.modelData
                             if (mouse.button === Qt.RightButton || it.onlyMenu) {
-                                if (it.hasMenu) {
-                                    const p = parent.mapToItem(null, 0, parent.height + 10)
-                                    it.display(root, p.x, p.y)
-                                }
+                                if (it.hasMenu) trayMenu.open()
                             } else if (mouse.button === Qt.MiddleButton) {
                                 it.secondaryActivate()
                             } else {
