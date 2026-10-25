@@ -301,13 +301,7 @@ hl.window_rule({
 	size = "855 728",
 })
 
--- Steam friends list
-hl.window_rule({
-	name = "float-steam-friends",
-	match = { class = "steam", title = "Friends List" },
-	float = true,
-	size = "839 851",
-})
 
 -- hyprmon: managed monitor profile include
 require("hyprmon")
+require("windowrules")
