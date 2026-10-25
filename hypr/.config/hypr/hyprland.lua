@@ -30,7 +30,6 @@ hl.config({
 	},
 })
 
-hl.layer_rule({ match = { namespace = "waybar" }, blur = true })
 hl.layer_rule({ match = { namespace = "wofi" }, blur = true })
 
 -------------------------------

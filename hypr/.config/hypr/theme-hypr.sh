@@ -56,14 +56,7 @@ set_wallpaper() { # awww remembers the last image itself, no conf to persist
   ln -sf "$1" "$HOME/.cache/current-wallpaper"
 }
 
-reload_waybar() {
-  if pgrep -x waybar >/dev/null; then
-    pkill -SIGUSR2 waybar # reloads config + CSS in place
-  else
-    waybar >/dev/null 2>&1 &
-    disown
-  fi
-}
+reload_waybar() { pgrep -x waybar >/dev/null && pkill -SIGUSR2 waybar; true; }
 
 generate_theme() {
   wal -i "$1" -n -q
