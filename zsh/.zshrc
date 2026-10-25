@@ -54,6 +54,13 @@ alias i3-c='nvim ~/.config/i3/config'
 alias gohome='cd ~'
 alias hyper-c='nvim ~/.config/hypr/hyprland.lua'
 
+# Gamescope wrapper that avoids the Steam Overlay lag-bomb bug
+gamescope-nolag() {
+  local w=${1:-2560} h=${2:-1440} r=${3:-164.83}
+  echo "env -u LD_PRELOAD gamescope -W $w -H $h -r $r -b -- env LD_PRELOAD=\"\$LD_PRELOAD\" %command%"
+}
+alias gnl='gamescope-nolag'
+
 # To start fuzzy finder
 eval "$(fzf --zsh)"
 
