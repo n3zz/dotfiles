@@ -214,28 +214,11 @@ PanelWindow {
 
             Sep { visible: root.player !== null }
 
-            Label {
+            MediaChip {
                 visible: root.player !== null
-                text: !root.player ? "" :
-                    (root.player.isPlaying ? "󰏤  " : "󰐊  ")
-                    + (Theme.trackTitle(root.player) || root.player.identity || "Unknown")
-                    + (root.player.trackArtist ? "  ·  " + root.player.trackArtist : "")
-                elide: Text.ElideRight
-                Layout.maximumWidth: 320
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    // left: media pop-out; right: quick play/pause; scroll: switch source
-                    onWheel: wheel => root.cyclePlayer(wheel.angleDelta.y > 0 ? -1 : 1)
-                    onClicked: mouse => {
-                        if (mouse.button === Qt.RightButton) {
-                            if (root.player?.canTogglePlaying) root.player.togglePlaying()
-                        } else {
-                            root.toggleHub("media")
-                        }
-                    }
-                }
+                player: root.player
+                onOpenRequested: root.toggleHub("media")
+                onCycle: dir => root.cyclePlayer(dir)
             }
         }
 

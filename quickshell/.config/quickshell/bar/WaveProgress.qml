@@ -18,7 +18,8 @@ Item {
     // wave shape
     property real wavelength: 22
     property real phase: 0
-    property real amp: playing ? 3.2 : 0
+    property real amplitude: 3.2
+    property real amp: playing ? amplitude : 0
     Behavior on amp { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
 
     // while dragging, show where the thumb will land
