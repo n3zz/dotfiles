@@ -304,3 +304,6 @@ hl.window_rule({
 -- hyprmon: managed monitor profile include
 require("hyprmon")
 require("windowrules")
+
+-- let a new lock screen take over if the current one ever crashes (recovery from a TTY)
+hl.config({ misc = { allow_session_lock_restore = true } })

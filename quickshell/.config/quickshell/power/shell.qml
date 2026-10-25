@@ -15,7 +15,7 @@ PanelWindow {
     property string uptime: ""
 
     readonly property var actions: [
-        { glyph: "󰌾", label: "Lock",      danger: false, cmd: ["hyprlock"] },
+        { glyph: "󰌾", label: "Lock",      danger: false, cmd: ["bash", "-c", "pgrep -f '^quickshell -p .*/lock' || quickshell -p \"$HOME/.config/quickshell/lock\""] },
         { glyph: "󰍃", label: "Log out",   danger: true,  cmd: ["bash", "-c", "loginctl terminate-session \"$XDG_SESSION_ID\""] },
         { glyph: "󰤄", label: "Suspend",   danger: false, cmd: ["systemctl", "suspend"] },
         { glyph: "󰜉", label: "Reboot",    danger: true,  cmd: ["systemctl", "reboot"] },

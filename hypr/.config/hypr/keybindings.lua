@@ -20,7 +20,7 @@ hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit")) -- dwindle only
 hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("$HOME/.config/hypr/theme-hypr.sh"))
 hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("$HOME/.config/hypr/theme-hypr.sh --random"))
-hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("pgrep -f '^quickshell -p .*/lock' || quickshell -p $HOME/.config/quickshell/lock"))
 
 hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("pkill -f '^quickshell -p .*/power' || quickshell -p $HOME/.config/quickshell/power"))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
