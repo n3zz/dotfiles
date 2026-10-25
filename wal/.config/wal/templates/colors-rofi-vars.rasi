@@ -1,6 +1,10 @@
 * {{
     bg:         {background}cc;
+    bg-soft:    {background}a6;
     fg:         {foreground};
+    muted:      {foreground}8c;
+    line:       {foreground}1f;
+    sel:        {foreground}14;
     accent:     {color4};
     accent-dim: {color4}55;
 }}

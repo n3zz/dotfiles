@@ -4,7 +4,7 @@
 
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
-local menu = "wofi --show drun"
+local menu = "rofi -show drun -theme ~/.config/rofi/launcher.rasi"
 local terminal = "kitty"
 local fileManager = "thunar"
 

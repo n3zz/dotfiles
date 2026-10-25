@@ -280,6 +280,9 @@ hl.window_rule({
 --     no_anim = true,
 -- })
 -- overlayLayerRule:set_enabled(false)
+--
+
+hl.layer_rule({ match = { namespace = "rofi" }, blur = true, ignore_alpha = 0.2 })
 
 -- Hyprland-run windowrule
 hl.window_rule({
