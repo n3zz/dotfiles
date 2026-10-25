@@ -83,116 +83,188 @@ Item {
             }
         }
 
-        // ----- header -----
-        RowLayout {
+        // ----- tabs -----
+        Rectangle {
             Layout.fillWidth: true
-            Label { text: "Notifications"; font.bold: true; font.pixelSize: 15 }
-            Label {
-                visible: Notifs.count > 0
-                text: Notifs.count
-                color: Theme.tint(Colours.fg, 0.5)
+            implicitHeight: 40
+            radius: 12
+            color: Theme.raised
+
+            // sliding highlight
+            Rectangle {
+                width: (parent.width - 8) / 2
+                height: parent.height - 8
+                y: 4
+                x: Notifs.sidebarTab === "notifs" ? 4 : parent.width / 2
+                radius: 9
+                color: Theme.surface
+                border.width: 1
+                border.color: Theme.line
+                Behavior on x { NumberAnimation { duration: 300; easing.type: Easing.OutQuint } }
             }
-            Item { Layout.fillWidth: true }
-            Label {
-                visible: Notifs.count > 0
-                text: "Clear all"
-                font.pixelSize: 12
-                color: clearMa.containsMouse ? Colours.accent : Theme.tint(Colours.fg, 0.6)
-                MouseArea {
-                    id: clearMa
-                    anchors.fill: parent
-                    anchors.margins: -4
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: Notifs.clearAll()
+            RowLayout {
+                anchors.fill: parent
+                spacing: 0
+                Repeater {
+                    model: [
+                        { id: "notifs", label: "󰂚  Notifications" },
+                        { id: "audio",  label: "󰕾  Audio" }
+                    ]
+                    Item {
+                        id: tabItem
+                        required property var modelData
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Label {
+                            anchors.centerIn: parent
+                            text: tabItem.modelData.label
+                                  + (tabItem.modelData.id === "notifs" && Notifs.count > 0 ? "  " + Notifs.count : "")
+                            font.pixelSize: 12
+                            font.bold: Notifs.sidebarTab === tabItem.modelData.id
+                            color: Notifs.sidebarTab === tabItem.modelData.id ? Colours.fg : Theme.tint(Colours.fg, 0.55)
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: Notifs.sidebarTab = tabItem.modelData.id
+                        }
+                    }
                 }
             }
         }
 
-        // ----- list -----
+        // ----- tab pages -----
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            ListView {
+            ColumnLayout {
+                id: notifPage
                 anchors.fill: parent
-                visible: Notifs.count > 0
-                clip: true
                 spacing: 14
-                boundsBehavior: Flickable.StopAtBounds
-                model: side.groups
+                opacity: Notifs.sidebarTab === "notifs" ? 1 : 0
+                visible: opacity > 0.01
+                Behavior on opacity { NumberAnimation { duration: 180 } }
 
-                // new entries slide in, removed ones collapse smoothly
-                add: Transition {
-                    NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 220 }
-                    NumberAnimation { property: "x"; from: 24; duration: 320; easing.type: Easing.OutQuint }
-                }
-                displaced: Transition {
-                    NumberAnimation { property: "y"; duration: 320; easing.type: Easing.OutQuint }
-                }
-
-                delegate: ColumnLayout {
-                    id: grp
-                    required property var modelData
-                    width: ListView.view.width
-                    spacing: 8
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Label {
-                            text: grp.modelData.app
-                            font.bold: true
-                            font.pixelSize: 12
-                            color: Theme.tint(Colours.fg, 0.6)
+                // ----- header -----
+                RowLayout {
+                    Layout.fillWidth: true
+                    Label { text: "Notifications"; font.bold: true; font.pixelSize: 15 }
+                    Label {
+                        visible: Notifs.count > 0
+                        text: Notifs.count
+                        color: Theme.tint(Colours.fg, 0.5)
+                    }
+                    Item { Layout.fillWidth: true }
+                    Label {
+                        visible: Notifs.count > 0
+                        text: "Clear all"
+                        font.pixelSize: 12
+                        color: clearMa.containsMouse ? Colours.accent : Theme.tint(Colours.fg, 0.6)
+                        MouseArea {
+                            id: clearMa
+                            anchors.fill: parent
+                            anchors.margins: -4
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: Notifs.clearAll()
                         }
-                        Label {
-                            visible: grp.modelData.items.length > 1
-                            text: grp.modelData.items.length
-                            font.pixelSize: 11
-                            color: Theme.tint(Colours.fg, 0.4)
+                    }
+                }
+
+                // ----- list -----
+                Item {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    ListView {
+                        anchors.fill: parent
+                        visible: Notifs.count > 0
+                        clip: true
+                        spacing: 14
+                        boundsBehavior: Flickable.StopAtBounds
+                        model: side.groups
+
+                        // new entries slide in, removed ones collapse smoothly
+                        add: Transition {
+                            NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 220 }
+                            NumberAnimation { property: "x"; from: 24; duration: 320; easing.type: Easing.OutQuint }
                         }
-                        Item { Layout.fillWidth: true }
-                        Label {
-                            text: "󰅖"
-                            font.pixelSize: 12
-                            color: Theme.tint(Colours.fg, gma.containsMouse ? 0.9 : 0.4)
-                            MouseArea {
-                                id: gma
-                                anchors.fill: parent
-                                anchors.margins: -4
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: { for (const n of grp.modelData.items.slice()) n.dismiss() }
+                        displaced: Transition {
+                            NumberAnimation { property: "y"; duration: 320; easing.type: Easing.OutQuint }
+                        }
+
+                        delegate: ColumnLayout {
+                            id: grp
+                            required property var modelData
+                            width: ListView.view.width
+                            spacing: 8
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Label {
+                                    text: grp.modelData.app
+                                    font.bold: true
+                                    font.pixelSize: 12
+                                    color: Theme.tint(Colours.fg, 0.6)
+                                }
+                                Label {
+                                    visible: grp.modelData.items.length > 1
+                                    text: grp.modelData.items.length
+                                    font.pixelSize: 11
+                                    color: Theme.tint(Colours.fg, 0.4)
+                                }
+                                Item { Layout.fillWidth: true }
+                                Label {
+                                    text: "󰅖"
+                                    font.pixelSize: 12
+                                    color: Theme.tint(Colours.fg, gma.containsMouse ? 0.9 : 0.4)
+                                    MouseArea {
+                                        id: gma
+                                        anchors.fill: parent
+                                        anchors.margins: -4
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: { for (const n of grp.modelData.items.slice()) n.dismiss() }
+                                    }
+                                }
+                            }
+
+                            Repeater {
+                                model: grp.modelData.items
+                                NotifCard {
+                                    required property var modelData
+                                    notif: modelData
+                                    Layout.fillWidth: true
+                                }
                             }
                         }
                     }
 
-                    Repeater {
-                        model: grp.modelData.items
-                        NotifCard {
-                            required property var modelData
-                            notif: modelData
-                            Layout.fillWidth: true
+                    Column {
+                        anchors.centerIn: parent
+                        visible: Notifs.count === 0
+                        spacing: 6
+                        Label {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: Notifs.dnd ? "󰂛" : "󰂚"
+                            font.pixelSize: 34
+                            color: Theme.tint(Colours.fg, 0.3)
+                        }
+                        Label {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "All caught up"
+                            color: Theme.tint(Colours.fg, 0.45)
                         }
                     }
                 }
             }
 
-            Column {
-                anchors.centerIn: parent
-                visible: Notifs.count === 0
-                spacing: 6
-                Label {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: Notifs.dnd ? "󰂛" : "󰂚"
-                    font.pixelSize: 34
-                    color: Theme.tint(Colours.fg, 0.3)
-                }
-                Label {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: "All caught up"
-                    color: Theme.tint(Colours.fg, 0.45)
-                }
+            AudioContent {
+                anchors.fill: parent
+                opacity: Notifs.sidebarTab === "audio" ? 1 : 0
+                visible: opacity > 0.01
+                Behavior on opacity { NumberAnimation { duration: 180 } }
             }
         }
     }

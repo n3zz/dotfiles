@@ -18,6 +18,7 @@ Singleton {
     // sidebar: open on one monitor at a time
     property bool sidebarOn: false
     property string sidebarScreen: ""
+    property string sidebarTab: "notifs"     // "notifs" or "audio"
 
     readonly property var list: server.trackedNotifications.values
     readonly property int count: list.length
@@ -29,6 +30,16 @@ Singleton {
             sidebarScreen = screenName
             sidebarOn = true
         }
+    }
+
+    function openSidebar(screenName, tab) {
+        if (sidebarOn && sidebarScreen === screenName && sidebarTab === tab) {
+            sidebarOn = false
+            return
+        }
+        sidebarTab = tab
+        sidebarScreen = screenName
+        sidebarOn = true
     }
 
     function removePopup(n) { root.popups = root.popups.filter(p => p !== n) }
@@ -114,5 +125,6 @@ Singleton {
         target: "notifs"
         function toggle(): void { root.toggleSidebar(Hyprland.focusedMonitor?.name ?? "") }
         function dnd(): void { root.dnd = !root.dnd }
+        function mixer(): void { root.openSidebar(Hyprland.focusedMonitor?.name ?? "", "audio") }
     }
 }

@@ -297,7 +297,12 @@ PanelWindow {
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-                onClicked: if (parent.audio) parent.audio.muted = !parent.audio.muted
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                // left: mute; right: open the mixer; scroll: volume
+                onClicked: mouse => {
+                    if (mouse.button === Qt.RightButton) Notifs.openSidebar(root.screenRef.name, "audio")
+                    else if (parent.audio) parent.audio.muted = !parent.audio.muted
+                }
                 onWheel: wheel => {
                     const a = parent.audio
                     if (!a) return
@@ -319,7 +324,7 @@ PanelWindow {
                 // left: open the notification centre on this monitor; right: Do Not Disturb
                 onClicked: mouse => {
                     if (mouse.button === Qt.RightButton) Notifs.dnd = !Notifs.dnd
-                    else Notifs.toggleSidebar(root.screenRef.name)
+                    else Notifs.openSidebar(root.screenRef.name, "notifs")
                 }
             }
         }
