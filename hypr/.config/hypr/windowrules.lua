@@ -41,3 +41,6 @@ hl.window_rule({
   tile  = true,
 })
 
+
+-- Quickshell wallpaper picker
+hl.layer_rule({ match = { namespace = "quickshell-wallpick" }, blur = true, ignore_alpha = 0.2 })

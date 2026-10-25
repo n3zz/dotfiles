@@ -3,6 +3,7 @@
 #
 #   theme-hypr.sh            interactive: pick mode, then wallpaper
 #   theme-hypr.sh --random   random wallpaper + generate theme from it
+#   theme-hypr.sh --set FILE set FILE as wallpaper + generate theme from it
 
 set -uo pipefail
 
@@ -102,6 +103,14 @@ if [[ "${1:-}" == "--random" ]]; then
   set_wallpaper "$WALLPAPER_PATH"
   generate_theme "$WALLPAPER_PATH"
   notify "Random wallpaper + generated theme"
+  exit 0
+fi
+
+if [[ "${1:-}" == "--set" && -f "${2:-}" ]]; then # used by the Quickshell picker
+  WALLPAPER_PATH="$2"
+  set_wallpaper "$WALLPAPER_PATH"
+  generate_theme "$WALLPAPER_PATH"
+  notify "Wallpaper + theme updated"
   exit 0
 fi
 
