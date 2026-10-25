@@ -18,12 +18,11 @@ require("monitors")
 require("autostart")
 require("keybindings")
 
-splash = false
-
 hl.config({
 	misc = {
 		disable_hyprland_logo = true,
 		disable_splash_rendering = true,
+		vrr = 0,
 	},
 
 	xwayland = {
@@ -41,7 +40,12 @@ hl.layer_rule({ match = { namespace = "wofi" }, blur = true })
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
 
 hl.env("XCURSOR_SIZE", "24")
-hl.env("HYPRCURSOR_SIZE", "24")
+hl.env("SDL_VIDEODRIVER", "x11")
+hl.env("SDL_VIDEO_DRIVER", "x11")
+hl.env("HYPRCURSOR_SIZE", "32")
+hl.env("WLR_NO_HARDWARE_CURSORS", "1")
+hl.env("HYPRCURSOR_THEME", "WiiCursorTheme")
+hl.env("XCURSOR_SIZE", "32")
 
 -----------------------
 ----- PERMISSIONS -----
@@ -191,6 +195,13 @@ hl.config({
 	misc = {
 		force_default_wallpaper = -1, -- Set to 0 or 1 to disable the anime mascot wallpapers
 		disable_hyprland_logo = false, -- If true disables the random hyprland logo / anime girl background. :(
+		disable_splash_rendering = true,
+	},
+})
+
+hl.config({
+	input = {
+		follow_mouse = 0,
 	},
 })
 
@@ -278,3 +289,22 @@ hl.window_rule({
 	move = "20 monitor_h-120",
 	float = true,
 })
+
+-- Spotify
+hl.window_rule({
+	name = "float-spotify",
+	match = { class = "Spotify" },
+	float = true,
+	size = "855 728",
+})
+
+-- Steam friends list
+hl.window_rule({
+	name = "float-steam-friends",
+	match = { class = "steam", title = "Friends List" },
+	float = true,
+	size = "839 851",
+})
+
+-- hyprmon: managed monitor profile include
+require("hyprmon")
