@@ -2,7 +2,7 @@ import QtQuick
 import Quickshell
 
 // One bar per monitor. Its clock pill unfolds into the dashboard and its right
-// island opens the notification centre. Toasts appear once, on the focused monitor.
+// island unfolds into the notification centre. Toasts appear once, on the focused monitor.
 ShellRoot {
     Variants {
         model: Quickshell.screens
@@ -14,18 +14,4 @@ ShellRoot {
     }
 
     Popups {}
-
-    // Replace Quickshell's unstyled "configuration loaded" popup:
-    // successful reloads (e.g. after a theme change) are silent, failures get a themed toast.
-    Connections {
-        target: Quickshell
-        function onReloadCompleted() {
-            Quickshell.inhibitReloadPopup()
-        }
-        function onReloadFailed(error: string) {
-            Quickshell.inhibitReloadPopup()
-            Quickshell.execDetached(["notify-send", "-u", "critical", "-a", "Quickshell",
-                                     "Bar reload failed", error])
-        }
-    }
 }

@@ -295,7 +295,7 @@ Item {
                         spacing: 2
                         Label {
                             Layout.fillWidth: true
-                            text: dash.player?.trackTitle || "Unknown"
+                            text: Theme.trackTitle(dash.player) || dash.player?.identity || "Unknown"
                             font.bold: true
                             elide: Text.ElideRight
                         }

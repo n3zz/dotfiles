@@ -22,10 +22,19 @@ PanelWindow {
     readonly property bool anyOpen: dashOpen || sideOpen
 
     readonly property var monitor: Hyprland.monitorFor(screenRef)
-    readonly property var player: {
-        // skip playerctld's proxy player, it mirrors real ones and is often empty
-        const ps = Mpris.players.values.filter(p => !p.dbusName.includes("playerctld"))
-        return ps.find(p => p.isPlaying) ?? ps[0] ?? null
+    // all real players (playerctld's proxy mirrors the others, so skip it)
+    readonly property var players: Mpris.players.values.filter(p => !p.dbusName.includes("playerctld"))
+    // the player you picked in the pop-out (or by scrolling the pill) wins while it exists;
+    // otherwise follow whatever is playing
+    property var pinnedPlayer: null
+    readonly property var player: pinnedPlayer && players.includes(pinnedPlayer)
+        ? pinnedPlayer
+        : (players.find(p => p.isPlaying) ?? players[0] ?? null)
+
+    function cyclePlayer(dir) {
+        if (players.length < 2) return
+        const i = Math.max(0, players.indexOf(player))
+        pinnedPlayer = players[(i + dir + players.length) % players.length]
     }
     readonly property var sink: Pipewire.defaultAudioSink
 
@@ -209,7 +218,7 @@ PanelWindow {
                 visible: root.player !== null
                 text: !root.player ? "" :
                     (root.player.isPlaying ? "󰏤  " : "󰐊  ")
-                    + (root.player.trackTitle || "Unknown")
+                    + (Theme.trackTitle(root.player) || root.player.identity || "Unknown")
                     + (root.player.trackArtist ? "  ·  " + root.player.trackArtist : "")
                 elide: Text.ElideRight
                 Layout.maximumWidth: 320
@@ -217,7 +226,8 @@ PanelWindow {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    // left: media pop-out; right: quick play/pause
+                    // left: media pop-out; right: quick play/pause; scroll: switch source
+                    onWheel: wheel => root.cyclePlayer(wheel.angleDelta.y > 0 ? -1 : 1)
                     onClicked: mouse => {
                         if (mouse.button === Qt.RightButton) {
                             if (root.player?.canTogglePlaying) root.player.togglePlaying()
@@ -253,7 +263,9 @@ PanelWindow {
             anchors { top: pill.bottom; horizontalCenter: parent.horizontalCenter }
             width: hub.mediaW
             active: root.hubMode === "media"
-            player: root.player
+            players: root.players
+            current: root.player
+            onChose: p => root.pinnedPlayer = p
             opacity: root.reveal(root.dashP) * hub.mediaVis
             visible: opacity > 0.01
             transform: Translate { y: (1 - root.reveal(root.dashP)) * -10 }
