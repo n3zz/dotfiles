@@ -83,3 +83,6 @@ hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true 
 
 -- Quickshell wallpaper picker (toggle)
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("pkill -f '^quickshell -p .*/wallpick' || quickshell -p $HOME/.config/quickshell/wallpick"))
+
+-- Quickshell clipboard history (toggle)
+hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("pkill -f '^quickshell -p .*/clipboard' || quickshell -p $HOME/.config/quickshell/clipboard"))
