@@ -86,3 +86,10 @@ hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("pkill -f '^quickshell -p .*/wallpick
 
 -- Quickshell clipboard history (toggle)
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("pkill -f '^quickshell -p .*/clipboard' || quickshell -p $HOME/.config/quickshell/clipboard"))
+
+-- Screenshots (grim + slurp + satty) — saved to ~/Pictures/Screenshots and copied to clipboard
+local shot = os.getenv("HOME") .. "/.config/hypr/scripts/screenshot.sh"
+hl.bind(mainMod .. " + SHIFT + X", hl.dsp.exec_cmd(shot .. " region"))
+hl.bind(mainMod .. " + CTRL + X",  hl.dsp.exec_cmd(shot .. " output"))
+hl.bind(mainMod .. " + ALT + X",   hl.dsp.exec_cmd(shot .. " window"))
+hl.bind(mainMod .. " + SHIFT + Z", hl.dsp.exec_cmd(shot .. " edit"))

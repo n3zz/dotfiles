@@ -61,3 +61,12 @@ hl.window_rule({
   match = { class = "^steam$", title = "^$" },
   float = true,
 })
+
+-- Quickshell clipboard picker: floating, centred
+hl.window_rule({
+  name   = "qs-clipboard",
+  match  = { class = "^org\\.quickshell$", title = "^Clipboard$" },
+  float  = true,
+  size   = "600 560",
+  center = true,
+})

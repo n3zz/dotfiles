@@ -2,12 +2,12 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import Quickshell.Wayland
 import Quickshell.Hyprland
 
 // Clipboard history picker (cliphist). Type to search, ↑/↓ + Enter to copy,
 // Delete removes the selected entry (when the search box is empty), Esc closes.
-PanelWindow {
+// A normal window: Hyprland floats it via a window rule on its title ("Clipboard").
+FloatingWindow {
     id: win
 
     readonly property string home: Quickshell.env("HOME")
@@ -41,14 +41,10 @@ PanelWindow {
         entries = []
     }
 
-    screen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name) ?? Quickshell.screens[0]
+    title: "Clipboard"
     implicitWidth: 600
     implicitHeight: 560
-    exclusionMode: ExclusionMode.Ignore
-    color: "transparent"
-    WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
-    WlrLayershell.namespace: "quickshell-clipboard"
+    color: win.surface
 
     // click outside to close
     HyprlandFocusGrab {
@@ -77,17 +73,7 @@ PanelWindow {
     Rectangle {
         id: panel
         anchors.fill: parent
-        radius: 22
         color: win.surface
-        border.width: 1
-        border.color: win.line
-
-        // pop in
-        scale: 0.96
-        opacity: 0
-        Component.onCompleted: { scale = 1; opacity = 1 }
-        Behavior on scale { NumberAnimation { duration: 260; easing.type: Easing.OutQuint } }
-        Behavior on opacity { NumberAnimation { duration: 180 } }
 
         ColumnLayout {
             anchors { fill: parent; margins: 16 }
