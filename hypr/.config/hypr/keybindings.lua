@@ -4,7 +4,7 @@
 
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
-local menu = "rofi -show drun -theme ~/.config/rofi/launcher.rasi"
+local menu = "rofi -show drun -theme " .. os.getenv("HOME") .. "/.config/rofi/launcher.rasi"
 local terminal = "kitty"
 local fileManager = "thunar"
 
@@ -19,6 +19,7 @@ hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit")) -- dwindle only
 hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("$HOME/.config/hypr/theme-hypr.sh"))
+hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("$HOME/.config/hypr/theme-hypr.sh --random"))
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
 
 hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("wlogout --protocol layer-shell"))
