@@ -19,7 +19,7 @@ hl.window_rule({
 -- Steam: chats/dialogs float small (chat titles = friend names, so match the class)
 hl.window_rule({
   name  = "steam-popups",
-  match = { class = "^steam$" },
+  match = { class = "^steam$", title = "^([^n]|n([^o]|o([^t]|t([^i]|i([^f]|f([^i]|i([^c]|c([^a]|a([^t]|t([^i]|i([^o]|o([^n]|n([^t]|t([^o]|o([^a]|a([^s]|s([^t]|t([^s])))))))))))))))))).*$" }, -- any title except toasts/empty
   float = true,
   size  = "720 520",
   persistent_size = true,
@@ -44,3 +44,20 @@ hl.window_rule({
 
 -- Quickshell wallpaper picker
 hl.layer_rule({ match = { namespace = "quickshell-wallpick" }, blur = true, ignore_alpha = 0.2 })
+
+-- Steam toasts: small, no focus stealing, top-right of the monitor
+hl.window_rule({
+  name     = "steam-toasts",
+  match    = { class = "^steam$", title = "^notificationtoasts_.*$" },
+  float    = true,
+  no_focus = true,
+  pin      = true,
+  move     = "monitor_w - window_w - 16 60",
+})
+
+-- Steam's untitled helper windows: float, but leave their size alone
+hl.window_rule({
+  name  = "steam-helpers",
+  match = { class = "^steam$", title = "^$" },
+  float = true,
+})
