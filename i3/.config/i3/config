@@ -44,7 +44,7 @@ exec --no-startup-dunst
 exec --no-startup-id xss-lock -- betterlockscreen -l
 exec --no-startup-id greenclip daemon>/dev/null
 exec_always --no-startup-id ~/.config/polybar/launch_polybar.sh
-exec --no-startup-id wal -R
+# colours persist in ~/.cache/wal (written by wallust), nothing to restore at login
 exec_always --no-startup-id i3-auto-tiling
 
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
