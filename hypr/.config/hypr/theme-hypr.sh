@@ -1,72 +1,133 @@
 #!/usr/bin/env bash
-# theme-switcher.sh
+# theme-hypr.sh — wallpaper + theme switcher (awww edition)
+#
+#   theme-hypr.sh            interactive: pick mode, then wallpaper
+#   theme-hypr.sh --random   random wallpaper + generate theme from it
+
+set -uo pipefail
 
 WALLPAPER_DIR="$HOME/Wallpapers"
+WAL_CACHE="$HOME/.cache/wal"
+THEMES_DIR="$HOME/.config/themes" # stowed from ~/dotfiles/themes
+PICKER_THEME="$HOME/.config/rofi/wallpick.rasi"
 
-# --- Step 1: pick mode ---
-MODE=$(printf "Wallpaper Only\nFixed Theme\nGenerate from Wallpaper" | wofi --dmenu --prompt "Theme Mode")
+TRANSITION=(--transition-type wipe --transition-angle 30
+  --transition-duration 1.0 --transition-fps 144)
 
-[ -z "$MODE" ] && exit 0
+mkdir -p "$WAL_CACHE"
 
-# --- Step 2: pick wallpaper ---
-WALLPAPER=$(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) |
-  xargs -n1 basename |
-  wofi --dmenu --prompt "Pick Wallpaper")
+# ---------- helpers ----------
 
-[ -z "$WALLPAPER" ] && exit 0
+have() { command -v "$1" >/dev/null 2>&1; }
 
-WALLPAPER_PATH="$WALLPAPER_DIR/$WALLPAPER"
+menu() { # menu "Prompt"  (reads options from stdin)
+  if have rofi; then rofi -dmenu -i -p "$1"; else wofi --dmenu --prompt "$1"; fi
+}
 
-# --- Step 3: apply wallpaper ---
-hyprctl hyprpaper wallpaper ",$WALLPAPER_PATH,cover"
+list_wallpapers() {
+  find "$WALLPAPER_DIR" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \
+    -o -iname '*.png' -o -iname '*.webp' \) -printf '%f\n' | sort
+}
 
-# --- Persist for next boot --- #
-cat >"$HOME/.config/hypr/hyprpaper.conf" <<EOF
-preload = $WALLPAPER_PATH
-wallpaper = ,$WALLPAPER_PATH, cover
-EOF
+pick_wallpaper() { # thumbnail grid with rofi, plain list with wofi
+  if have rofi; then
+    local theme_arg=()
+    [[ -f "$PICKER_THEME" ]] && theme_arg=(-theme "$PICKER_THEME")
+    list_wallpapers | while IFS= read -r f; do
+      printf '%s\0icon\x1f%s\n' "$f" "$WALLPAPER_DIR/$f"
+    done | rofi -dmenu -i -show-icons -p "" "${theme_arg[@]}"
+  else
+    list_wallpapers | wofi --dmenu --prompt "Pick Wallpaper"
+  fi
+}
 
-# --- Step 4: dispatch based on mode ---
-case "$MODE" in
-"Wallpaper Only")
-  notify-send "Theme Switcher" "Wallpaper updated: $WALLPAPER" -i "$WALLPAPER_PATH"
-  ;;
+ensure_daemon() {
+  if ! awww query >/dev/null 2>&1; then
+    awww-daemon >/dev/null 2>&1 &
+    disown
+    sleep 0.5
+  fi
+}
 
-"Fixed Theme")
-  THEME=$(printf "Tokyo Night Storm\nDracula" | wofi --dmenu --prompt "Pick Theme")
-  [ -z "$THEME" ] && exit 0
+set_wallpaper() { # awww remembers the last image itself, no conf to persist
+  ensure_daemon
+  awww img "$1" "${TRANSITION[@]}"
+  ln -sf "$1" "$HOME/.cache/current-wallpaper"
+}
 
-  case "$THEME" in
+reload_waybar() {
+  if pgrep -x waybar >/dev/null; then
+    pkill -SIGUSR2 waybar # reloads config + CSS in place
+  else
+    waybar >/dev/null 2>&1 &
+    disown
+  fi
+}
+
+generate_theme() {
+  wal -i "$1" -n -q
+  echo "neopywal" >"$WAL_CACHE/nvim-colorscheme"
+
+  # GTK-compatible colours for waybar/wofi/rofi
+  {
+    echo "@define-color background $(sed -n '1p' "$WAL_CACHE/colors");"
+    echo "@define-color foreground $(sed -n '8p' "$WAL_CACHE/colors");"
+    for i in $(seq 0 15); do
+      echo "@define-color color$i $(sed -n "$((i + 1))p" "$WAL_CACHE/colors");"
+    done
+  } >"$WAL_CACHE/colors-gtk.css"
+
+  reload_waybar
+}
+
+apply_fixed() {
+  case "$1" in
   "Tokyo Night Storm")
-    cp "$HOME/dotfiles/<path-to>/tokyonight-kitty.conf" "$HOME/.cache/wal/colors-kitty.conf"
-    echo "tokyonight" >"$HOME/.cache/wal/nvim-colorscheme"
+    cp "$THEMES_DIR/tokyo-night-storm/colors-kitty.conf" "$WAL_CACHE/colors-kitty.conf"
+    echo "tokyonight" >"$WAL_CACHE/nvim-colorscheme"
     ;;
   "Dracula")
-    cp "$HOME/dotfiles/<path-to>/dracula-kitty.conf" "$HOME/.cache/wal/colors-kitty.conf"
-    echo "dracula" >"$HOME/.cache/wal/nvim-colorscheme"
+    cp "$THEMES_DIR/dracula/colors-kitty.conf" "$WAL_CACHE/colors-kitty.conf"
+    echo "dracula" >"$WAL_CACHE/nvim-colorscheme"
     ;;
   esac
+}
 
-  notify-send "Theme Switcher" "Applied fixed theme: $THEME" -i "$WALLPAPER_PATH"
+notify() { notify-send "Theme Switcher" "$1" -i "$WALLPAPER_PATH"; }
+
+# ---------- non-interactive ----------
+
+if [[ "${1:-}" == "--random" ]]; then
+  WALLPAPER_PATH="$WALLPAPER_DIR/$(list_wallpapers | shuf -n1)"
+  set_wallpaper "$WALLPAPER_PATH"
+  generate_theme "$WALLPAPER_PATH"
+  notify "Random wallpaper + generated theme"
+  exit 0
+fi
+
+# ---------- interactive ----------
+
+MODE=$(printf "Wallpaper Only\nFixed Theme\nGenerate from Wallpaper" | menu "Theme Mode")
+[[ -z "$MODE" ]] && exit 0
+
+WALLPAPER=$(pick_wallpaper)
+[[ -z "$WALLPAPER" ]] && exit 0
+WALLPAPER_PATH="$WALLPAPER_DIR/$WALLPAPER"
+
+set_wallpaper "$WALLPAPER_PATH"
+
+case "$MODE" in
+"Wallpaper Only")
+  notify "Wallpaper updated: $WALLPAPER"
+  ;;
+"Fixed Theme")
+  THEME=$(printf "Tokyo Night Storm\nDracula" | menu "Pick Theme")
+  [[ -z "$THEME" ]] && exit 0
+  apply_fixed "$THEME"
+  notify "Applied fixed theme: $THEME"
   ;;
 "Generate from Wallpaper")
-  wal -i "$WALLPAPER_PATH" -n
-  echo "neopywal" >"$HOME/.cache/wal/nvim-colorscheme"
-
-  # Generate GTK-compatible color file for waybar/wofi
-  {
-    echo "@define-color background $(sed -n '1p' "$HOME/.cache/wal/colors");"
-    echo "@define-color foreground $(sed -n '8p' "$HOME/.cache/wal/colors");"
-    for i in $(seq 0 15); do
-      line=$((i + 1))
-      echo "@define-color color$i $(sed -n "${line}p" "$HOME/.cache/wal/colors");"
-    done
-  } >"$HOME/.cache/wal/colors-gtk.css"
-
-  # Restart waybar to pick up new CSS
-  pkill waybar
-  waybar &
-
-  notify-send "Theme Switcher" "Generated theme from wallpaper" -i "$WALLPAPER_PATH"
+  generate_theme "$WALLPAPER_PATH"
+  notify "Generated theme from wallpaper"
   ;;
 esac
