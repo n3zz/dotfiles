@@ -93,3 +93,6 @@ hl.bind(mainMod .. " + SHIFT + X", hl.dsp.exec_cmd(shot .. " region"))
 hl.bind(mainMod .. " + CTRL + X",  hl.dsp.exec_cmd(shot .. " output"))
 hl.bind(mainMod .. " + ALT + X",   hl.dsp.exec_cmd(shot .. " window"))
 hl.bind(mainMod .. " + SHIFT + Z", hl.dsp.exec_cmd(shot .. " edit"))
+
+-- Clips: save the last 60s of the replay buffer (gpu-screen-recorder)
+hl.bind(mainMod .. " + ALT + G", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/hypr/scripts/clip-save.sh"))

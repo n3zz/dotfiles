@@ -16,7 +16,7 @@ window {
     border: 1px;
     border-radius: 20px;
     border-color: @line;
-    background-color: @bg-soft;
+    background-color: @surface;
 }
 mainbox { children: [ inputbar, listview ]; spacing: 0; }
 inputbar {
@@ -44,10 +44,10 @@ element {
     padding: 10px 14px;
     spacing: 14px;
     border-radius: 12px;
-    border: 0 0 0 3px;
+    border: 0;
     border-color: transparent;
 }
-element selected { background-color: @sel; border-color: @accent; }
+element selected { background-color: @sel; }
 element-icon { size: 30px; }
 element-text { vertical-align: 0.5; }
 element-text selected { text-color: @fg; }

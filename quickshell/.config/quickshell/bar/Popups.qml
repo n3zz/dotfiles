@@ -36,24 +36,35 @@ PanelWindow {
                 popup: true
                 Layout.fillWidth: true
 
-                opacity: 0
-                transform: Translate { id: slide; x: 24 }
-                Component.onCompleted: appear.start()
+                // slide in
+                enterOpacity: 0
+                enterX: 24
                 ParallelAnimation {
                     id: appear
-                    NumberAnimation { target: toast; property: "opacity"; to: 1; duration: 220; easing.type: Easing.OutCubic }
-                    NumberAnimation { target: slide; property: "x"; to: 0; duration: 260; easing.type: Easing.OutQuint }
+                    NumberAnimation { target: toast; property: "enterOpacity"; to: 1; duration: 220; easing.type: Easing.OutCubic }
+                    NumberAnimation { target: toast; property: "enterX"; to: 0; duration: 260; easing.type: Easing.OutQuint }
                 }
 
-                // hide after the app's timeout (default 5s); hovering pauses it; critical stays
-                Timer {
-                    interval: toast.notif.expireTimeout > 0 ? toast.notif.expireTimeout * 1000 : 5000
-                    running: !toast.critical && !toast.hovering
-                    onTriggered: {
+                // lifetime: the app's timeout (default 5s), shown as the timer bar; hover pauses; critical stays
+                life: critical ? -1 : 1
+                NumberAnimation {
+                    id: lifeAnim
+                    target: toast
+                    property: "life"
+                    from: 1
+                    to: 0
+                    duration: toast.notif.expireTimeout > 0 ? toast.notif.expireTimeout * 1000 : 5000
+                    paused: running && toast.hovering
+                    onFinished: {
                         const n = toast.notif
                         Notifs.removePopup(n)
                         if (n.transient) n.expire()
                     }
+                }
+
+                Component.onCompleted: {
+                    appear.start()
+                    if (!critical) lifeAnim.start()
                 }
             }
         }

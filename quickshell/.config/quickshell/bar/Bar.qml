@@ -277,6 +277,45 @@ PanelWindow {
         id: rightIsland
         anchors { right: parent.right; rightMargin: 12; top: parent.top }
 
+        // replay buffer indicator: click = save the last minute, right-click = open the clips folder
+        Rectangle {
+            visible: Stats.rec
+            implicitWidth: recRow.implicitWidth + 16
+            implicitHeight: 22
+            radius: 11
+            color: recMa.containsMouse ? Theme.tint(Theme.danger, 0.30) : Theme.tint(Theme.danger, 0.18)
+            Row {
+                id: recRow
+                anchors.centerIn: parent
+                spacing: 6
+                Rectangle {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 8; height: 8; radius: 4
+                    color: Theme.danger
+                    SequentialAnimation on opacity {
+                        loops: Animation.Infinite
+                        running: Stats.rec
+                        NumberAnimation { to: 0.35; duration: 900; easing.type: Easing.InOutSine }
+                        NumberAnimation { to: 1; duration: 900; easing.type: Easing.InOutSine }
+                    }
+                }
+                Label { text: "REC"; font.pixelSize: 11; font.bold: true; color: Theme.danger }
+            }
+            MouseArea {
+                id: recMa
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onClicked: mouse => {
+                    if (mouse.button === Qt.RightButton)
+                        Quickshell.execDetached(["xdg-open", Quickshell.env("HOME") + "/Videos/Clips"])
+                    else
+                        Quickshell.execDetached([Quickshell.env("HOME") + "/.config/hypr/scripts/clip-save.sh"])
+                }
+            }
+        }
+
         Label {
             text: "  " + Stats.cpu + "%  " + Stats.cpuTemp + "°"
             color: Stats.cpuTemp >= 85 ? Theme.danger : Colours.fg
@@ -324,6 +363,26 @@ PanelWindow {
         }
 
         Label {
+            id: bell
+            // little ring wiggle whenever a new notification arrives
+            property int lastCount: 0
+            Component.onCompleted: lastCount = Notifs.count
+            transformOrigin: Item.Top
+            Connections {
+                target: Notifs
+                function onCountChanged() {
+                    if (Notifs.count > bell.lastCount && !Notifs.dnd) ring.restart()
+                    bell.lastCount = Notifs.count
+                }
+            }
+            SequentialAnimation {
+                id: ring
+                RotationAnimation { target: bell; to: -22; duration: 70; easing.type: Easing.OutQuad }
+                RotationAnimation { target: bell; to: 18; duration: 110; easing.type: Easing.InOutQuad }
+                RotationAnimation { target: bell; to: -12; duration: 100; easing.type: Easing.InOutQuad }
+                RotationAnimation { target: bell; to: 7; duration: 90; easing.type: Easing.InOutQuad }
+                RotationAnimation { target: bell; to: 0; duration: 120; easing.type: Easing.OutQuad }
+            }
             text: (Notifs.dnd ? "󰂛" : Notifs.count > 0 ? "󰂞" : "󰂚")
                   + (Notifs.count > 0 ? "  " + Notifs.count : "")
             color: root.sideOpen || (Notifs.count > 0 && !Notifs.dnd) ? Colours.accent : Colours.fg
@@ -395,6 +454,6 @@ PanelWindow {
         Keys.onEscapePressed: root.closeAll()
 
         // content travels with the panel, so it's fully visible the whole way in
-        SideContent { anchors.fill: parent }
+        SideContent { anchors.fill: parent; open: root.sideOpen }
     }
 }

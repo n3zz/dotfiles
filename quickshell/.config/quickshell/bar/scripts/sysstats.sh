@@ -51,8 +51,11 @@ while true; do
   net=$(nmcli -t -f TYPE,STATE device 2>/dev/null |
     awk -F: '$2 == "connected" && ($1 == "ethernet" || $1 == "wifi") {print $1; exit}')
 
-  printf '{"cpu":%d,"ctemp":%d,"mem":%d,"gpu":%d,"gtemp":%d,"vram":%d,"net":"%s"}\n' \
-    "$cpu" "$ctemp" "$mem" "$gutil" "$gtemp" "$vram" "$net"
+  rec=0
+  pgrep -f '^gpu-screen-recorder ' >/dev/null 2>&1 && rec=1
+
+  printf '{"cpu":%d,"ctemp":%d,"mem":%d,"gpu":%d,"gtemp":%d,"vram":%d,"net":"%s","rec":%d}\n' \
+    "$cpu" "$ctemp" "$mem" "$gutil" "$gtemp" "$vram" "$net" "$rec"
 
   if ((i % 15 == 0)); then
     echo "{\"disks\":[$(disks_json)]}"

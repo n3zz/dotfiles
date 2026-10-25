@@ -14,6 +14,7 @@ Singleton {
     property int gpuTemp: 0
     property int vram: 0
     property string net: ""
+    property bool rec: false     // gpu-screen-recorder replay buffer running
     property var cpuHist: []
     property var gpuHist: []
     property var disks: []   // [{ mount, pct, used, size }]
@@ -41,6 +42,7 @@ Singleton {
                 root.gpuTemp = d.gtemp
                 root.vram = d.vram
                 root.net = d.net
+                root.rec = d.rec === 1
                 root.cpuHist = root.push(root.cpuHist, d.cpu)
                 root.gpuHist = root.push(root.gpuHist, d.gpu)
             }

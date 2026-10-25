@@ -8,6 +8,8 @@ import Quickshell.Bluetooth
 Item {
     id: side
 
+    property bool open: false     // set by the bar; replays the entrance animations
+
     // newest first, grouped by app (group order = most recent notification)
     readonly property var groups: {
         const map = new Map()
@@ -33,7 +35,19 @@ Item {
         property string glyph
         property string label
         property bool on: false
+        property bool play: false     // flips true when the panel opens
+        property int order: 0         // stagger position
         signal clicked()
+
+        onPlayChanged: if (play) { glyphLabel.scale = 0.3; glyphLabel.rotation = -25; pop.restart() }
+        SequentialAnimation {
+            id: pop
+            PauseAnimation { duration: 140 + t.order * 60 }
+            ParallelAnimation {
+                NumberAnimation { target: glyphLabel; property: "scale"; to: 1; duration: 460; easing.type: Easing.OutBack; easing.overshoot: 2.4 }
+                NumberAnimation { target: glyphLabel; property: "rotation"; to: 0; duration: 520; easing.type: Easing.OutBack }
+            }
+        }
         Layout.fillWidth: true
         implicitHeight: 58
         radius: 14
@@ -43,7 +57,7 @@ Item {
         Column {
             anchors.centerIn: parent
             spacing: 4
-            Label { anchors.horizontalCenter: parent.horizontalCenter; text: t.glyph; font.pixelSize: 18 }
+            Label { id: glyphLabel; anchors.horizontalCenter: parent.horizontalCenter; text: t.glyph; font.pixelSize: 18 }
             Label { anchors.horizontalCenter: parent.horizontalCenter; text: t.label; font.pixelSize: 11 }
         }
         MouseArea {
@@ -64,19 +78,35 @@ Item {
             Layout.fillWidth: true
             spacing: 10
             Toggle {
+
+                play: side.open; order: 0
                 glyph: Notifs.dnd ? "󰂛" : "󰂚"; label: "Silent"; on: Notifs.dnd
                 onClicked: Notifs.dnd = !Notifs.dnd
             }
             Toggle {
+
+                play: side.open; order: 1
                 glyph: "󰅶"; label: "Caffeine"; on: Notifs.caffeine
                 onClicked: Notifs.caffeine = !Notifs.caffeine
             }
             Toggle {
+
+                play: side.open; order: 2
+                glyph: "󰑋"; label: "Clips"; on: Stats.rec
+                // enable/disable so the choice also sticks across logins
+                onClicked: Quickshell.execDetached(["systemctl", "--user", Stats.rec ? "disable" : "enable",
+                                                    "--now", "gpu-screen-recorder.service"])
+            }
+            Toggle {
+
+                play: side.open; order: 3
                 visible: side.hasWifi
                 glyph: "󰖩"; label: "Wi-Fi"; on: Networking.wifiEnabled
                 onClicked: Networking.wifiEnabled = !Networking.wifiEnabled
             }
             Toggle {
+
+                play: side.open; order: 4
                 visible: side.bt !== null
                 glyph: "󰂯"; label: "Bluetooth"; on: side.bt?.enabled ?? false
                 onClicked: if (side.bt) side.bt.enabled = !side.bt.enabled
@@ -187,7 +217,6 @@ Item {
 
                         // new entries slide in, removed ones collapse smoothly
                         add: Transition {
-                            NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 220 }
                             NumberAnimation { property: "x"; from: 24; duration: 320; easing.type: Easing.OutQuint }
                         }
                         displaced: Transition {
@@ -197,6 +226,25 @@ Item {
                         delegate: ColumnLayout {
                             id: grp
                             required property var modelData
+                            required property int index
+
+                            // staggered slide-in each time the panel opens
+                            property real enter: 1
+                            opacity: enter
+                            transform: Translate { x: (1 - grp.enter) * 36 }
+                            Connections {
+                                target: side
+                                function onOpenChanged() {
+                                    if (!side.open) return
+                                    grp.enter = 0
+                                    enterAnim.restart()
+                                }
+                            }
+                            SequentialAnimation {
+                                id: enterAnim
+                                PauseAnimation { duration: 160 + Math.min(grp.index, 6) * 55 }
+                                NumberAnimation { target: grp; property: "enter"; to: 1; duration: 420; easing.type: Easing.OutQuint }
+                            }
                             width: ListView.view.width
                             spacing: 8
 

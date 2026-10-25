@@ -1,6 +1,7 @@
 * {{
     bg:         {background}cc;
     bg-soft:    {background}a6;
+    surface:    {background};
     fg:         {foreground};
     muted:      {foreground}8c;
     line:       {foreground}1f;

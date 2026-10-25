@@ -70,3 +70,11 @@ hl.window_rule({
   size   = "600 560",
   center = true,
 })
+
+-- Video players: always solid
+hl.window_rule({
+  name    = "video-opaque",
+  match   = { class = "(?i)^(vlc|org\\.videolan\\.vlc|mpv|.*celluloid.*)$" },
+  opacity = "1.0 override 1.0 override 1.0 override",
+  no_blur = true,
+})

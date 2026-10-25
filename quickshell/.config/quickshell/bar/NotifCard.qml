@@ -33,6 +33,46 @@ Rectangle {
 
     function activate() { if (notif) Notifs.open(notif) }
 
+    // ----- entrance (driven by Popups) + swipe to dismiss -----
+    property real enterX: 0
+    property real enterOpacity: 1
+    property real swipeX: 0
+    property real life: -1          // toast lifetime 1 → 0; -1 hides the timer bar
+
+    transform: Translate { x: card.enterX + card.swipeX }
+    opacity: enterOpacity * Math.max(0, 1 - Math.abs(swipeX) / Math.max(1, width) * 0.9)
+
+    function finishSwipe() {
+        if (!notif) return
+        if (popup) Notifs.removePopup(notif)   // toast: just hide it, it stays in the centre
+        else notif.dismiss()                   // centre: remove it
+    }
+
+    DragHandler {
+        id: swipe
+        target: null
+        yAxis.enabled: false
+        property real startX: 0
+        onActiveChanged: {
+            if (active) {
+                snapBack.stop()
+                startX = card.swipeX
+            } else if (Math.abs(card.swipeX) > card.width * 0.33) {
+                flyOut.to = card.swipeX > 0 ? card.width * 1.25 : -card.width * 1.25
+                flyOutSeq.start()
+            } else {
+                snapBack.start()
+            }
+        }
+        onActiveTranslationChanged: if (active) card.swipeX = startX + activeTranslation.x
+    }
+    NumberAnimation { id: snapBack; target: card; property: "swipeX"; to: 0; duration: 320; easing.type: Easing.OutBack }
+    SequentialAnimation {
+        id: flyOutSeq
+        NumberAnimation { id: flyOut; target: card; property: "swipeX"; duration: 180; easing.type: Easing.InCubic }
+        ScriptAction { script: card.finishSwipe() }
+    }
+
     implicitHeight: row.implicitHeight + 24
     radius: 16
     color: popup ? (hovering ? Theme.raised : Theme.surface) : (hovering ? Theme.raisedHover : Theme.raised)
@@ -176,6 +216,21 @@ Rectangle {
                     }
                 }
             }
+        }
+    }
+
+    // toast timer: shrinks over the toast's lifetime, pauses on hover
+    Rectangle {
+        visible: card.life >= 0
+        anchors { left: parent.left; right: parent.right; bottom: parent.bottom; leftMargin: 16; rightMargin: 16; bottomMargin: 5 }
+        height: 3
+        radius: 1.5
+        color: Theme.tint(Colours.accent, 0.18)
+        Rectangle {
+            width: parent.width * Math.max(0, card.life)
+            height: parent.height
+            radius: 1.5
+            color: Colours.accent
         }
     }
 }
