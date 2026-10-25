@@ -56,21 +56,29 @@ Item {
             ctx.lineCap = "round"
             ctx.lineWidth = 3
 
+            // thumb fits the bar's height (the small chip clipped it into a square lump);
+            // the wave and track both stop a little short of it
+            const th = Math.max(6, Math.min(16, height - 4))
+            const tw = th >= 12 ? 4 : 3
+            const g = w.indeterminate ? 0 : tw / 2 + 3
+            const waveEnd = x1 - g
+
             // remaining part: flat
-            if (x1 + 7 < width - pad) {
+            if (x1 + g < width - pad) {
                 ctx.strokeStyle = w.css(w.trackColor)
                 ctx.beginPath()
-                ctx.moveTo(x1 + 7, mid)
+                ctx.moveTo(x1 + g, mid)
                 ctx.lineTo(width - pad, mid)
                 ctx.stroke()
             }
 
             // played part: travelling sine wave (amplitude eases in from the start)
-            if (x1 > pad + 1) {
+            if (waveEnd > pad + 1) {
                 ctx.strokeStyle = w.indeterminate ? w.css(w.color, 0.55) : w.css(w.color)
                 ctx.beginPath()
-                for (let x = pad; x <= x1; x += 1) {
-                    const ease = Math.min(1, (x - pad) / 10)
+                for (let x = pad; x <= waveEnd; x += 1) {
+                    // amplitude eases in at the start and back out into the thumb
+                    const ease = Math.min(1, (x - pad) / 10, (waveEnd - x) / 6 + 0.15)
                     const y = mid + Math.sin(x * k - w.phase) * w.amp * ease
                     if (x === pad) ctx.moveTo(x, y)
                     else ctx.lineTo(x, y)
@@ -82,7 +90,7 @@ Item {
             if (w.indeterminate) return
             ctx.fillStyle = w.css(w.color)
             ctx.beginPath()
-            ctx.roundedRect(x1 - 2, mid - 8, 4, 16, 2, 2)
+            ctx.roundedRect(x1 - tw / 2, mid - th / 2, tw, th, tw / 2, tw / 2)
             ctx.fill()
         }
     }

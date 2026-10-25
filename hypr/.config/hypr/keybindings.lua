@@ -99,3 +99,4 @@ hl.bind(mainMod .. " + ALT + G", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/
 
 -- Workspace overview (toggle), like Win+Tab
 hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("pkill -f '^quickshell -p .*/overview' || quickshell -p $HOME/.config/quickshell/overview"))
+hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("quickshell -p $HOME/.config/quickshell/bar ipc call ai toggle"))

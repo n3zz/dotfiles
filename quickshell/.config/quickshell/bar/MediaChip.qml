@@ -116,30 +116,67 @@ Item {
             visible: opacity > 0.01
             Behavior on opacity { NumberAnimation { duration: 220 } }
 
-            Text {
-                id: nameText
-                anchors.verticalCenter: parent.verticalCenter
-                text: chip.label
-                color: Colours.fg
-                textFormat: Text.PlainText
-                font { family: Theme.font; pixelSize: 13 }
+            // two copies side by side; sliding left by one copy + gap and looping is seamless
+            readonly property int gap: 48
+            readonly property bool scrolling: chip.showName && nameText.implicitWidth > nameBox.width
 
-                readonly property real overflow: Math.max(0, implicitWidth - nameBox.width)
+            Row {
+                id: marquee
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: nameBox.gap
                 x: 0
-                SequentialAnimation on x {
-                    running: chip.showName && nameText.overflow > 0
+                Text {
+                    id: nameText
+                    text: chip.label
+                    color: Colours.fg
+                    textFormat: Text.PlainText
+                    font { family: Theme.font; pixelSize: 13 }
+                }
+                Text {
+                    visible: nameBox.scrolling
+                    text: chip.label
+                    color: Colours.fg
+                    textFormat: Text.PlainText
+                    font: nameText.font
+                }
+            }
+
+            SequentialAnimation {
+                id: scroll
+                running: nameBox.scrolling
+                PauseAnimation { duration: 1200 }
+                NumberAnimation {
+                    target: marquee; property: "x"
+                    from: 0; to: -(nameText.implicitWidth + nameBox.gap)
+                    duration: (nameText.implicitWidth + nameBox.gap) * 30     // ~33 px/s
                     loops: Animation.Infinite
-                    PauseAnimation { duration: 900 }
-                    NumberAnimation { to: -nameText.overflow; duration: Math.max(1500, nameText.overflow * 28); easing.type: Easing.InOutSine }
-                    PauseAnimation { duration: 900 }
-                    NumberAnimation { to: 0; duration: Math.max(1500, nameText.overflow * 28); easing.type: Easing.InOutSine }
-                    onStopped: nameText.x = 0
+                }
+                onStopped: marquee.x = 0
+            }
+            Connections {
+                target: chip
+                function onLabelChanged() { marquee.x = 0; if (scroll.running) scroll.restart() }
+            }
+
+            // soft edges while scrolling
+            // (only as tall as the text, so they never paint over the pill's border)
+            Rectangle {
+                anchors { left: parent.left; verticalCenter: parent.verticalCenter }
+                width: 18
+                height: nameText.height + 4
+                opacity: nameBox.scrolling && marquee.x < 0 ? 1 : 0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0; color: Theme.surface }
+                    GradientStop { position: 1; color: Theme.tint(Theme.surface, 0) }
                 }
             }
             Rectangle {
-                anchors { right: parent.right; top: parent.top; bottom: parent.bottom }
-                width: 16
-                visible: nameText.overflow > 0
+                anchors { right: parent.right; verticalCenter: parent.verticalCenter }
+                width: 18
+                height: nameText.height + 4
+                visible: nameBox.scrolling
                 gradient: Gradient {
                     orientation: Gradient.Horizontal
                     GradientStop { position: 0; color: Theme.tint(Theme.surface, 0) }

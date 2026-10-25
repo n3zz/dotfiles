@@ -19,7 +19,8 @@ PanelWindow {
     readonly property bool dashOpen: hubMode !== ""
     onHubModeChanged: if (hubMode !== "") shownMode = hubMode
     readonly property bool sideOpen: Notifs.sidebarOn && Notifs.sidebarScreen === screenRef.name
-    readonly property bool anyOpen: dashOpen || sideOpen
+    readonly property bool aiOpen: Ai.open && Ai.screenName === screenRef.name
+    readonly property bool anyOpen: dashOpen || sideOpen || aiOpen
 
     readonly property var monitor: Hyprland.monitorFor(screenRef)
     // all real players (playerctld's proxy mirrors the others, so skip it)
@@ -43,6 +44,10 @@ PanelWindow {
     // Curve: "emphasized decelerate" — fast start, long soft landing.
     property real dashP: dashOpen ? 1 : 0
     property real sideP: sideOpen ? 1 : 0
+    property real aiP: aiOpen ? 1 : 0
+    Behavior on aiP {
+        NumberAnimation { duration: 560; easing.type: Easing.BezierSpline; easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0] }
+    }
     Behavior on dashP {
         NumberAnimation { duration: 520; easing.type: Easing.BezierSpline; easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0] }
     }
@@ -69,6 +74,7 @@ PanelWindow {
         Region { item: hub }
         Region { item: rightIsland }
         Region { item: sidePanel }
+        Region { item: aiPanel }
     }
 
     // click anywhere outside the bar to fold everything back up
@@ -81,6 +87,7 @@ PanelWindow {
     function closeAll() {
         hubMode = ""
         if (sideOpen) Notifs.sidebarOn = false
+        if (aiOpen) Ai.open = false
     }
     function toggleHub(mode) {
         const opening = hubMode !== mode
@@ -91,7 +98,8 @@ PanelWindow {
         }
     }
     // the sidebar can also be opened by keybind (IPC), so react to the state itself
-    onSideOpenChanged: if (sideOpen) { hubMode = ""; sidePanel.forceActiveFocus() }
+    onSideOpenChanged: if (sideOpen) { hubMode = ""; if (aiOpen) Ai.open = false; sidePanel.forceActiveFocus() }
+    onAiOpenChanged: if (aiOpen) { hubMode = ""; if (sideOpen) Notifs.sidebarOn = false; aiContent.focusInput() }
 
     PwObjectTracker { objects: [root.sink] }
     SystemClock { id: clock; precision: SystemClock.Minutes }
@@ -125,6 +133,32 @@ PanelWindow {
     Island {
         id: leftIsland
         anchors { left: parent.left; leftMargin: 12; top: parent.top }
+
+        // AI sidebar button
+        // right-click hides it; bring it back with the pin in the panel header
+        Label {
+            id: aiBtn
+            visible: Ai.showButton
+            text: "✦"
+            font.pixelSize: 15
+            color: root.aiOpen || aiBtnMa.containsMouse ? Colours.accent : Colours.fg
+            Behavior on color { ColorAnimation { duration: 160 } }
+            rotation: root.aiP * 90
+            MouseArea {
+                id: aiBtnMa
+                anchors.fill: parent
+                anchors.margins: -6
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onClicked: mouse => {
+                    if (mouse.button === Qt.RightButton) Ai.showButton = false
+                    else Ai.toggle(root.screenRef.name)
+                }
+            }
+        }
+
+        Sep { visible: Ai.showButton }
 
         Row {
             spacing: 6
@@ -434,14 +468,8 @@ PanelWindow {
                     source: modelData.icon
                     implicitSize: 16
 
-                    // the app's own menu, attached just below its icon
-                    QsMenuAnchor {
-                        id: trayMenu
-                        menu: trayIcon.modelData.menu
-                        anchor.item: trayIcon
-                        anchor.edges: Edges.Bottom
-                        anchor.gravity: Edges.Bottom
-                    }
+                    // the app's own menu, themed, just below its icon
+                    function showMenu() { trayMenu.openFor(trayIcon, trayIcon.modelData) }
 
                     MouseArea {
                         anchors.fill: parent
@@ -452,7 +480,7 @@ PanelWindow {
                         onClicked: mouse => {
                             const it = trayIcon.modelData
                             if (mouse.button === Qt.RightButton || it.onlyMenu) {
-                                if (it.hasMenu) trayMenu.open()
+                                if (it.hasMenu) trayIcon.showMenu()
                             } else if (mouse.button === Qt.MiddleButton) {
                                 it.secondaryActivate()
                             } else {
@@ -484,5 +512,26 @@ PanelWindow {
 
         // content travels with the panel, so it's fully visible the whole way in
         SideContent { anchors.fill: parent; open: root.sideOpen }
+    }
+
+    TrayMenu { id: trayMenu }
+
+    // ---------- AI assistant: slides in from the left edge ----------
+    Rectangle {
+        id: aiPanel
+        z: 3
+        width: 440
+        y: 46
+        height: root.height - y - 12
+        x: root.lerp(-width - 24, 12, root.aiP)
+        visible: root.aiP > 0.001
+        radius: 24
+        color: Theme.surface
+        border.width: 1
+        border.color: Theme.line
+
+        Keys.onEscapePressed: root.closeAll()
+
+        AiContent { id: aiContent; anchors.fill: parent; open: root.aiOpen }
     }
 }
