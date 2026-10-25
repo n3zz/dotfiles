@@ -1,0 +1,6 @@
+* {{
+    bg:         {background}cc;
+    fg:         {foreground};
+    accent:     {color4};
+    accent-dim: {color4}55;
+}}

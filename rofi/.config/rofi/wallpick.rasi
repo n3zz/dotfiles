@@ -1,0 +1,30 @@
+@import "/home/ary/.cache/wal/colors-rofi-vars.rasi"
+
+configuration { show-icons: true; }
+
+* {
+    font: "JetBrainsMono Nerd Font 11";
+    background-color: transparent;
+    text-color: @fg;
+}
+window {
+    width: 70%;
+    padding: 18px;
+    border: 1px;
+    border-radius: 16px;
+    border-color: @accent;
+    background-color: @bg;
+}
+mainbox  { children: [ inputbar, listview ]; spacing: 14px; }
+inputbar {
+    padding: 10px 14px;
+    border-radius: 10px;
+    background-color: @accent-dim;
+    children: [ entry ];
+}
+entry    { placeholder: "Search wallpapers"; }
+listview { columns: 4; lines: 3; spacing: 12px; fixed-columns: true; scrollbar: false; }
+element  { orientation: vertical; padding: 8px; spacing: 6px; border-radius: 12px; }
+element selected { background-color: @accent-dim; }
+element-icon { size: 200px; }
+element-text { horizontal-align: 0.5; }
