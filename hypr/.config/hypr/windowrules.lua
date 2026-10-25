@@ -78,3 +78,6 @@ hl.window_rule({
   opacity = "1.0 override 1.0 override 1.0 override",
   no_blur = true,
 })
+
+-- full-screen windows (games, video) keep the screen awake
+hl.window_rule({ name = "idle-fullscreen", match = { class = ".*" }, idle_inhibit = "fullscreen" })

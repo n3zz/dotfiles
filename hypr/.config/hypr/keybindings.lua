@@ -96,3 +96,6 @@ hl.bind(mainMod .. " + SHIFT + Z", hl.dsp.exec_cmd(shot .. " edit"))
 
 -- Clips: save the last 60s of the replay buffer (gpu-screen-recorder)
 hl.bind(mainMod .. " + ALT + G", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/hypr/scripts/clip-save.sh"))
+
+-- Workspace overview (toggle), like Win+Tab
+hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("pkill -f '^quickshell -p .*/overview' || quickshell -p $HOME/.config/quickshell/overview"))
