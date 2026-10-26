@@ -1,0 +1,6 @@
+[Unit]
+Description=Copy wallpaper and colours to the login screen
+
+[Service]
+Type=oneshot
+ExecStart=%h/.config/quickshell/greeter/sync.sh

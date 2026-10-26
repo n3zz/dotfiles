@@ -46,6 +46,12 @@ hl.env("WLR_NO_HARDWARE_CURSORS", "1")
 hl.env("HYPRCURSOR_THEME", "WiiCursorTheme")
 hl.env("XCURSOR_SIZE", "32")
 
+-- Gaming (NVIDIA): newest DLSS in every game, and a shader cache that doesn't get wiped
+hl.env("PROTON_DLSS_UPGRADE", "1")                    -- GE/cachyos: fetch latest DLSS + newest preset
+hl.env("PROTON_ENABLE_NGX_UPDATER", "1")              -- Valve Proton: let NVIDIA update DLSS
+hl.env("__GL_SHADER_DISK_CACHE_SIZE", "12000000000")  -- 12 GB shader cache (default is small)
+hl.env("__GL_SHADER_DISK_CACHE_SKIP_CLEANUP", "1")    -- never auto-delete it, so no repeat long loads
+
 -----------------------
 ----- PERMISSIONS -----
 -----------------------

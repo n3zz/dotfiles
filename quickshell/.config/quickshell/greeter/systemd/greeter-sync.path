@@ -1,0 +1,10 @@
+[Unit]
+Description=Watch for theme changes to sync the login screen
+
+[Path]
+PathChanged=%h/.cache/wal/Colours.qml
+PathChanged=%h/.cache/current-wallpaper
+Unit=greeter-sync.service
+
+[Install]
+WantedBy=default.target
